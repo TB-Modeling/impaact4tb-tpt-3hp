@@ -1,0 +1,30 @@
+# Misc
+_ignore
+
+# Default
+__pycache__/
+_dev/
+.idea/
+build/
+dev/
+dist/
+env/
+ignored/
+output/
+*~$*
+*.DS_Store
+*.egg-info
+*.swp
+tags
+MANIFEST
+
+# Tableau
+*.twbr
+
+# R
+*.Rproj
+*.Rproj.user
+*.Rhistory
+*.RData
+*.Ruserdata
+.Rproj.user
