@@ -35,8 +35,6 @@ _(@Julia: How do you prefer to run it? I wrote what I would do here but I don't 
 _(@Julia: Do you have any materials you'd like to upload and link here? Like powerpoints or word documents? I can upload if you want I usually use google drive. Also, I added a placeholder above for you to edit. If you don't want to link anything, we can also delete this section. Also, when your paper is published, it'd be great if you linked it here too. -Joe)_
 
 # Contact us!
-Having any trouble running the model? Questions or comments? Feel free to reach out to us at: DAVID@JHU.EDU
-
-_(@David: Guessing you are most appropriate for this, and you can CC to Julia and others as necessary. Is this alright? Just note that when putting your email address here, it could open to some exposure of your email address which could lead to spam, etc. But I've never had this happen. If you're not worried about that, can you put your email address here? -Joe)_
+Having any trouble running the model? Questions or comments? Feel free to reach out to us at: ddowdy1@jhmi.edu
 
 _(@Julia: And Julia, if you want your email address here too alongside David's, feel free to add it. -Joe)_
