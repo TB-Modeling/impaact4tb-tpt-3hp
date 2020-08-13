@@ -1,5 +1,5 @@
 ---
-title: "I4TB baseline scenario"
+title: "I4TB PLHIV 3HP cost effectiveness analysis"
 author: "Julia Shin"
 output: pdf_document
 ---
@@ -7,8 +7,6 @@ output: pdf_document
 # Step 0: Parameters
 
 ```{r step2a parameters}    
-a <- c( 'I4TB.g1', 'I4TB.g2', 'other.g1', 'other.g2')
-
 time=11 #(2020~2030)
 imp.time=10 #3HP effectiveness time =10years
 
@@ -17,7 +15,6 @@ eff <- 0.9       #Efficacy of 3HP/ Sterling, N Engl J Med 2011
 comp <- 0.8      #Completion of 3HP/ Sterling, N Engl J Med 2011
 r <- 0.03        #Discount Rate
 fatal<- 0.11     #TB case-fatality for HIV+ on TB treatment
-#RRonART <-0.42   #RR for TB mortality if on ART
 UwHIV <- 0.947   #Utility of people with HIV on ART
 LE <- 27         #Life expectancy of HIV-positive individual on ART
 UwTB <- 0.601    #Utility of TB with HIV+ 
@@ -176,8 +173,6 @@ pop <- c(n.brz, n.cmb, n.eth, n.ghn, n.ind, n.idn, n.kny, n.mlw, n.mzb, n.sa, n.
 
 m.pop <- matrix(pop, nrow=1, ncol=16)
 
-
-
 # Annual growth rate of HIV infection
 pHIV.brz <- (n.brz /43000)^(1/10)-1
 pHIV.cmb <- (n.cmb /2700)^(1/10)-1
@@ -196,9 +191,6 @@ pHIV.I4TB.g2 <- (n.I4TB.g2/223900)^(1/8)-1
 pHIV.other.g1 <- (n.other.g1/555000)^(1/10)-1
 pHIV.other.g2 <- (n.other.g2/428100)^(1/8)-1
 
-
-
-
 m.pHIV <- matrix(c(0:0), nrow=16, ncol=16)
 m.pHIV[1,1] <- pHIV.brz+1
 m.pHIV[2,2] <- pHIV.cmb+1 
@@ -216,7 +208,6 @@ m.pHIV[13,13] <- pHIV.I4TB.g1+1
 m.pHIV[14,14] <- pHIV.I4TB.g2+1
 m.pHIV[15,15] <- pHIV.other.g1+1
 m.pHIV[16,16] <- pHIV.other.g2+1
-
  
 m.pop%*%(m.pHIV)
 
@@ -226,10 +217,6 @@ m[1,] <- m.pop
 for (i in 2:time) {
     m[i, ] = m[i-1, ]%*%(m.pHIV)
   }  
-
-
-write.table(as.matrix(rowSums(m )), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/HIVdiag.txt", sep="\t") 
-
 
 # ART coverage
 pART.brz <- 0.81
@@ -246,7 +233,6 @@ pART.tnz <- 0.828
 pART.zbw <- 0.855
 pART.g1 <- 0.81
 pART.g2 <- 0.81
-
 
 m.pART <- matrix(c(0:0), nrow=16, ncol=16)
 m.pART[1,1] <- pART.brz
@@ -265,17 +251,12 @@ m.pART[13,13] <- pART.g1
 m.pART[14,14] <- pART.g2
 m.pART[15,15] <- pART.g1
 m.pART[16,16] <- pART.g2
-
  
 ## 2020~2030 # of PLHIV on ART (newly enrolled)
 m.ART <- matrix( ,nrow=time, ncol=16)
 for (i in 1:time) {
 m.ART[i, ] <- m [i, ]%*%m.pART 
     }  
-
-write.table(m.ART, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/HIVonART.txt", sep="\t")  
-
-#i4tb.pop<- read.csv('/users/julia shin/Documents/JHU/I4TB/i4tb_pop_2yr.csv')
 
 #I4TB covers 5~60% of newly enrolled in ART care 
 m.i4tb<- data.matrix(i4tb.pop)
@@ -287,121 +268,11 @@ m.i4tb[2,2] <- m.ART [2,14]%*%0.5
  
 rownames(m.i4tb) <- c(2020:2030)
 colnames(m.i4tb) <- c('I4TB.g1', 'I4TB.g2', 'other.g1', 'other.g2')
-
-#m.i4tb <- m.i4tb[ ,-1] ##I4TB population 
-```
-
-```#{r step1b PLHIV on TPT (Status Quo)}
-# TPT coverage
-pTPT.brz <- 0.31
-pTPT.cmb <- 0.21
-pTPT.eth <- 0.49
-pTPT.ghn <- 0.46
-pTPT.ind <- 0.17
-pTPT.idn <- 0.10
-pTPT.kny <- 0.33
-pTPT.mlw <- 0.50
-pTPT.mzb <- 0.52
-pTPT.sa <- 0.65
-pTPT.tnz <- 0.09
-pTPT.zbw <- 0.73
-
-m.pTPT <- matrix(c(0:0), nrow=12, ncol=12)
-m.pTPT[1,1] <- pTPT.brz
-m.pTPT[2,2] <- pTPT.cmb 
-m.pTPT[3,3] <- pTPT.eth
-m.pTPT[4,4] <- pTPT.ghn
-m.pTPT[5,5] <- pTPT.ind 
-m.pTPT[6,6] <- pTPT.idn 
-m.pTPT[7,7] <- pTPT.kny
-m.pTPT[8,8] <- pTPT.mlw
-m.pTPT[9,9] <- pTPT.mzb 
-m.pTPT[10,10] <- pTPT.sa 
-m.pTPT[11,11] <- pTPT.tnz
-m.pTPT[12,12] <- pTPT.zbw
- 
- ## 2020~2030 # of PLHIV on TPT 
-m.TPT <- matrix( ,nrow=time, ncol=12)
-for (i in 1:time) {
-m.TPT[i, ] <- m.ART [i, ]%*%m.pTPT 
-    }  
-
-table.m.TPT<- cbind(as.data.frame(m.TPT), as.data.frame(rowSums(m.TPT)))
-colnames(table.m.TPT) <- paste0(varname)
-
-write.table(table.m.TPT, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/TPT(status quo).txt", sep="\t")  
-
 ```
 
 # Step 2: Scenario1 of 3HP coverage
 
-``` #{r step2a 3HP coverage estimation S1} 
-## Group 1 reach to 90% by 2030, G2 reach to 70% by 2030
-m.p3HP.S1 <- matrix(c(0:0), nrow=time, ncol=12)
-m.p3HP.S1[1,1] <- pTPT.brz
-m.p3HP.S1[1,2] <- pTPT.cmb 
-m.p3HP.S1[1,3] <- pTPT.eth
-m.p3HP.S1[1,4] <- pTPT.ghn
-m.p3HP.S1[1,5] <- pTPT.ind 
-m.p3HP.S1[1,6] <- pTPT.idn 
-m.p3HP.S1[1,7] <- pTPT.kny
-m.p3HP.S1[1,8] <- pTPT.mlw
-m.p3HP.S1[1,9] <- pTPT.mzb 
-m.p3HP.S1[1,10] <- pTPT.sa 
-m.p3HP.S1[1,11] <- pTPT.tnz
-m.p3HP.S1[1,12] <- pTPT.zbw
-for (i in 2:time) {
-m.p3HP.S1[i,1] <- m.p3HP.S1[i-1,1]* ((0.7/pTPT.brz)^(1/10))
-m.p3HP.S1[i,2] <- m.p3HP.S1[i-1,2]* ((0.7/pTPT.cmb)^(1/10)) 
-m.p3HP.S1[i,3] <- m.p3HP.S1[i-1,3]* ((0.9/pTPT.eth)^(1/10)) 
-m.p3HP.S1[i,4] <- m.p3HP.S1[i-1,4]* ((0.9/pTPT.ghn)^(1/10)) 
-m.p3HP.S1[i,5] <- m.p3HP.S1[i-1,5]* ((0.7/pTPT.ind)^(1/10)) 
-m.p3HP.S1[i,6] <- m.p3HP.S1[i-1,6]* ((0.7/pTPT.idn)^(1/10)) 
-m.p3HP.S1[i,7] <- m.p3HP.S1[i-1,7]* ((0.9/pTPT.kny)^(1/10)) 
-m.p3HP.S1[i,8] <- m.p3HP.S1[i-1,8]* ((0.9/pTPT.mlw)^(1/10)) 
-m.p3HP.S1[i,9] <- m.p3HP.S1[i-1,9]* ((0.9/pTPT.mzb)^(1/10)) 
-m.p3HP.S1[i,10] <- m.p3HP.S1[i-1,10]* ((0.9/pTPT.sa)^(1/10)) 
-m.p3HP.S1[i,11] <- m.p3HP.S1[i-1,11]* ((0.9/pTPT.tnz)^(1/10)) 
-m.p3HP.S1[i,12] <- m.p3HP.S1[i-1,12]* ((0.9/pTPT.zbw)^(1/10))  
-} 
-
-rownames(m.p3HP.S1) <- c(2020:2030)
-colnames(m.p3HP.S1) <- c(a)
-
- 
-write.table((m.p3HP.S1), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/3HP.txt", sep="\t")         
-
-### graph ####
-
-par(mar = c(4, 4, 4, 5))
-matplot(m.p3HP.S1, type="l", xaxt="n",  col=c("#FFCC00","#FF9900","#99FF66","#66CC33" ,"#FF6600", "#FF3300","#33CCFF","#66CCFF","#6699FF","#3366FF","#0033CC","#000066"),lty=c(1:1),xlab="year",ylab="TPT coverage rate", main="TPT coverage projection (S1)") 
-abline(h=c(0.7, 0.9), col=c("grey"), lty=c(2,2))
-axis(side=2, at=c(0,0.7, 0.9))
-TimePoints=2020:2030
-axis(side=1,at=1:11,labels=TimePoints)
-legend("bottomright", inset = c(0, 0),legend = c(a), lty=c(1:1), lwd=c(1:1), col=c("#FFCC00","#FF9900","#99FF66","#66CC33" ,"#FF6600", "#FF3300","#33CCFF","#66CCFF","#6699FF","#3366FF","#0033CC","#000066"), ncol=3, bty = "n", cex=0.7, text.col=c("#FFCC00","#FF9900","#99FF66","#66CC33" ,"#FF6600", "#FF3300","#33CCFF","#66CCFF","#6699FF","#3366FF","#0033CC","#000066"))
-
-
-### graph ####
-
-m.pIPT <- matrix(c(0:0), nrow=time, ncol=12) 
-m.pIPT[,1] <- pTPT.brz
-m.pIPT[,2] <- pTPT.cmb 
-m.pIPT[,3] <- pTPT.eth
-m.pIPT[,4] <- pTPT.ghn
-m.pIPT[,5] <- pTPT.ind 
-m.pIPT[,6] <- pTPT.idn 
-m.pIPT[,7] <- pTPT.kny
-m.pIPT[,8] <- pTPT.mlw
-m.pIPT[,9] <- pTPT.mzb 
-m.pIPT[,10] <- pTPT.sa 
-m.pIPT[,11] <- pTPT.tnz
-m.pIPT[,12] <- pTPT.zbw
-
-m.pS1 <- m.p3HP.S1 - m.pIPT  ## additional coverage by Scenario 1
-``` 
- 
-``` {r step2b catalytic impact population S1}  
+``` {r step2a catalytic impact population S1}  
 m.new <- matrix(c(0:0), nrow=time, ncol=4)
 m.new[1, 3] = m.ART[1,15]*0.25  #50%(half)*50%
 m.new[2, 3] = m.ART[2,15]*0.3  #50%(half)*60%
@@ -427,10 +298,9 @@ for (i in 7:time) {
 rownames(m.new) <- c(2020:2030)
 colnames(m.new) <- c('I4TB.g1', 'I4TB.g2', 'other.g1', 'other.g2')
 
-write.table(as.matrix(m.new), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/new_pop .txt", sep="\t") 
 ``` 
 
-```{r step 2c catalytic impact on old PLWHIV S1}
+```{r step 2b catalytic impact on old PLWHIV S1}
 # est. number of PLWHIV on ART in 2019 
 ## applied CAGR (2010-2018)
 oldART.brz <- 654794
@@ -450,19 +320,7 @@ oldART.I4TB.g2 <- 2057697
 oldART.other.g1 <- 6366064
 oldART.other.g2 <- 5740131
 
-#oldART.pop <- c(oldART.brz, oldART.cmb, oldART.eth, oldART.ghn, oldART.ind, oldART.idn, oldART.kny, oldART.mlw, oldART.mzb, oldART.sa, oldART.tnz, oldART.zbw, oldART.I4TB.g1, oldART.I4TB.g2, oldART.other.g1, oldART.other.g2)
-
 old.pop <- c(oldART.I4TB.g1, oldART.I4TB.g2, oldART.other.g1, oldART.other.g2)
-
-## 2020~2030 # of 3HP covered on existing onART population   
-
-#0. coverage constant (final)
-#I4TB.G1:90% by 2025, 95% by 2030
-#I4TB.G2:90% by 2030
-#Other.G1: half follows I4TB.G1, half follows I4TB.G2
-#other.G2: 70% by 2030
-
-# ==> 6M by 2022 (UNHLM target)
 
 m.oldpop <- matrix(old.pop , nrow=1, ncol=4)
 
@@ -513,19 +371,12 @@ m.old[11,4] <- m.oldpop[1,4] * 0.15
 rownames(m.old) <- c(2020:2030)
 colnames(m.old) <- c('I4TB.g1', 'I4TB.g2', 'other.g1', 'other.g2')
 
-write.table(m.S1.oldART, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/old_pop.txt", sep="\t") 
-
-
 m.S1 <- m.new + m.old 
-write.table(m.S1, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/S1.catpop.txt", sep="\t") 
 
 m.total <- m.new + m.old + m.i4tb
-
-
-
 ```
 
-#3. I4TB
+# Step 3: I4TB direct effect  
 
 ``` {r step3a I4TB cohort survival projection}      
 
@@ -636,8 +487,6 @@ names(l.DALY.dis.i4tb) <- paste0(a)
 ```
 
 ```{r step3e I4TB cost projection }
-
-
 l.delivery.i4tb <- vector("list", 4)
 for (k in 1:4) { ##k=country name
   l.delivery.i4tb[[k]]<-matrix(NA, nrow=1, ncol=2)   
@@ -690,9 +539,6 @@ for (i in 1:imp.time) {
 }
 names(l.ARTcost.i4tb) <- paste0(a)
 
-
-
-
 ## discounted cost saved
 
 l.TBcostsaved.dis.i4tb <- vector("list", 4)
@@ -718,8 +564,6 @@ for (i in 1:imp.time) {
 }}
 } 
 names(l.ARTcost.dis.i4tb) <- paste0(a)
-
-
 ```
 
 ``` {r step3g Cost effectiveness_I4TB}  
@@ -785,8 +629,6 @@ rownames(f.DALY.averted.i4tb) <-c(a,'total')
 ft.DALY.averted.i4tb <- as.data.frame(f.DALY.averted.i4tb)
 
 
- 
-
 #4. Delivery cost
 Delivery.sum.i4tb <- matrix(NA, nrow=4, ncol=2)   
 for (k in 1:4) {
@@ -797,8 +639,6 @@ for (i in 1:2) {
 Delivery.sum.dis.i4tb[, i] <- Delivery.sum.i4tb[, i]*(1/(1+r)^(i-1))} 
 
 Delivery.cost.i4tb<- rowSums(Delivery.sum.dis.i4tb)
-
-write.table(as.matrix(colSums(Delivery.sum.i4tb)), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/cost.i4tb.txt", sep="\t") 
 
 ct.Delivery.cost.i4tb <- as.matrix(Delivery.cost.i4tb)
 sum.Delivery.cost.i4tb <- as.matrix(sum(Delivery.cost.i4tb))
@@ -820,8 +660,6 @@ Tox.sum.dis.i4tb[, i] <- Tox.sum.i4tb[, i]*(1/(1+r)^(i-1))}
 
 Tox.cost.i4tb<- rowSums(Tox.sum.dis.i4tb)
 sum(Tox.cost.i4tb)
-
-write.table(as.matrix(colSums(Tox.sum.i4tb)), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/toxcost.i4tb.txt", sep="\t") 
 
 ct.Tox.cost.i4tb <- as.matrix(Tox.cost.i4tb)
 sum.Tox.cost.i4tb <- as.matrix(sum(Tox.cost.i4tb))
@@ -858,8 +696,6 @@ TBcostsaved.sum.dis.i4tb[, i] <- TBcostsaved.sum.i4tb[, i]*(1/(1+r)^(i-1))}
 TBcost.saved.i4tb<- rowSums(TBcostsaved.sum.dis.i4tb)
 sum(TBcost.saved.i4tb)
 
-write.table(as.matrix(colSums(TBcostsaved.sum.i4tb)), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/TBcostsaved.i4tb.txt", sep="\t") 
-
 ct.TBcost.saved.i4tb <- as.matrix(TBcost.saved.i4tb)
 sum.TBcost.saved.i4tb <- as.matrix(sum(TBcost.saved.i4tb))
 
@@ -880,8 +716,6 @@ ARTcost.sum.dis.i4tb[, i] <- ARTcost.sum.i4tb[, i]*(1/(1+r)^(i-1))}
 ARTcost.saved.i4tb<- rowSums(ARTcost.sum.dis.i4tb)
 sum(ARTcost.saved.i4tb)
 
-write.table(as.matrix(colSums(ARTcost.sum.i4tb)), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/ARTcost.i4tb.txt", sep="\t") 
-
 ct.ARTcost.saved.i4tb <- as.matrix(ARTcost.saved.i4tb)
 sum.ARTcost.saved.i4tb <- as.matrix(sum(ARTcost.saved.i4tb))
 
@@ -889,8 +723,6 @@ f.ARTcost.saved.i4tb <- rbind(ct.ARTcost.saved.i4tb , sum.ARTcost.saved.i4tb )
 colnames(f.ARTcost.saved.i4tb) <-c("ART Costs added")
 
 ft.ARTcost.saved.i4tb <- as.data.frame(f.ARTcost.saved.i4tb, row.names=c(a,'total') )
-
-
 ```
 
 ```{r I4TB summary tables}
@@ -916,108 +748,9 @@ Cost.I4TB
 ICER.I4TB= Cost.I4TB/sum(DALY.averted.i4tb)
 ICER.I4TB
 
-# -156609.5
-# 51469742
-# -2.171294
-# 713.5959
-
-
-
-# 8536169
-# 60162521
-# 514.5594
-# 3626.591
+# 1580.22
 ```
-
-```{r step3i I4TB #of case and death}
-
-#case averted per year (10 year horizon)
-
-
-caseaverted.I4TB <- matrix(NA, ncol=11, nrow=4) 
-for ( k in 1:4 ) {
-  caseaverted.I4TB[k,1] = l.case.i4tb[[k]][1,1] #Calculates the first value
-
-  for ( i in 2:10 ) { #All values from 2 to 10
-    caseaverted.I4TB[k,i] = l.case.i4tb[[k]][i,1] + l.case.i4tb[[k]][i-1,2]
-  }
-  
-   caseaverted.I4TB[k,11] = l.case.i4tb[[k]][10,2] #Calculates the last value
-}
-
-Case.averted.I4TB <- colSums(caseaverted.I4TB)
-
-#death averted per year (10 year horizon)
-
-deathaverted.I4TB <- matrix(NA, ncol=11, nrow=4) 
-for ( k in 1:4 ) {
-  deathaverted.I4TB[k,1] = l.death.i4tb[[k]][1,1] #Calculates the first value
-
-  for ( i in 2:10 ) { #All values from 2 to 4
-     deathaverted.I4TB[k,i] = l.death.i4tb[[k]][i,1] + l.death.i4tb[[k]][i-1,2]
-  }
-
-  deathaverted.I4TB[k,11] = l.death.i4tb[[k]][10,2] #Calculates the last value
-}
-
-death.averted.I4TB <- colSums(deathaverted.I4TB)
-
-
-
-#TBcost saved per year (10 year horizon)  
-#2020~2030
-
-TBcostsaved.I4TB <- matrix(NA, ncol=11, nrow=4) 
-for ( k in 1:4 ) {
-  TBcostsaved.I4TB[k,1] = l.TBcostsaved.i4tb[[k]][1,1] #Calculates the first value
-
-  for ( i in 2:10 ) { #All values from 2 to 4
-    TBcostsaved.I4TB[k,i] = l.TBcostsaved.i4tb[[k]][i,1] + l.TBcostsaved.i4tb[[k]][i-1,2]
-  }
-
-  TBcostsaved.I4TB[k,11] = l.TBcostsaved.i4tb[[k]][10,2] #Calculates the last value
-}
-
-TBcost.saved.I4TB <- colSums(TBcostsaved.I4TB)
-
-
-#TBcost saved per year (10 year horizon)   l.ARTcost.i4tb
-#2020~2030
-
-ARTcostadded.I4TB <- matrix(NA, ncol=11, nrow=4) 
-for ( k in 1:4 ) {
-  ARTcostadded.I4TB[k,1] = l.ARTcost.i4tb[[k]][1,1] #Calculates the first value
-
-  for ( i in 2:10 ) { #All values from 2 to 4
-    ARTcostadded.I4TB[k,i] = l.ARTcost.i4tb[[k]][i,1] + l.ARTcost.i4tb[[k]][i-1,2]
-  }
-
-  ARTcostadded.I4TB[k,11] = l.ARTcost.i4tb[[k]][10,2] #Calculates the last value
-}
-
-
-ARTcost.added.I4TB <- colSums(ARTcostadded.I4TB)
-
-Toxcost.added.I4TB <- colSums(Tox.sum.i4tb)
-
-
-calendar1.I4TB <- cbind(as.matrix(t(Topdowncost)), as.matrix(Toxcost.added.I4TB))
-
-calendar2.I4TB <- cbind(as.matrix(ARTcost.added.I4TB ), as.matrix(TBcost.saved.I4TB),as.matrix(Case.averted.I4TB),as.matrix(death.averted.I4TB))
-
-rownames(calendar1.I4TB) <-c(2020:2021)
-colnames(calendar1.I4TB) <-c("delivery costs", "toxicity treatment costs added")
-
-rownames(calendar2.I4TB) <-c(2020:2030)
-colnames(calendar2.I4TB) <-c("ART costs added", "TB treatment costs saved", "cases averted", "deaths averted")
-
-
-
-write.table(calendar1.I4TB, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/calendar1.I4TB.txt", sep="\t") 
-write.table(calendar2.I4TB, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/calendar2.I4TB.txt", sep="\t") 
-  
-
-```
+# Step 3-1: I4TB direct effect (PSA)  
 
 ``` {r SA.I4tb}
 treatment.sim<-function(
@@ -1294,20 +1027,6 @@ Delivery.cost.i4tb<- rowSums(Delivery.sum.dis.i4tb)
 
 sum.Delivery.cost.i4tb <- as.matrix(sum(Delivery.cost.i4tb))
 
-#4-1. Top-down cost
-#Topdowncost <- matrix( , nrow=1, ncol=4)
-#Topdowncost[1,1] <-14031848
-#Topdowncost[1,2] <-19133771
-#Topdowncost[1,3] <-17719493
-#Topdowncost[1,4] <-13964771
-
-#Topdowncost.dis <- matrix( , nrow=1, ncol=4)
-#for (i in 1:4) {
- # Topdowncost.dis[1,i] <- Topdowncost[1,i]*(1/(1+r))^(i-1)}
-
-#Topdown.cost.i4tb<- rowSums(Topdowncost.dis)
-#Topdown.cost.i4tb= 62090390
- 
 #5. TOX cost
 Tox.sum.i4tb <- matrix(NA, nrow=4, ncol=2)   
 for (k in 1:4) {
@@ -1382,7 +1101,7 @@ results<-c(sum.Delivery.cost.i4tb, sum.Topdown.cost.i4tb, sum.TBcost.saved.i4tb,
 
 #Define the sampling distributions for each input variable
 #Alternatively, this can be imported using the function:
-param.ranges<-read.csv('/users/julia shin/Documents/JHU/I4TB/parameter_new.csv',header=T,fileEncoding="UTF-8-BOM")
+param.ranges<-read.csv('/users/julia shin/Documents/JHU/I4TB/parameter_new_f.csv',header=T,fileEncoding="UTF-8-BOM")
 
 param2.ranges<-data.frame("variable"=character(16),"base"=numeric(16),
                      "distribution"=character(16),
@@ -1392,8 +1111,8 @@ param2.ranges<-data.frame("variable"=character(16),"base"=numeric(16),
 param2.ranges[,"variable"]<-c("cOPD.g1","cOPD.g2","cOPD.g3","cOPD.g4", "cinp.g1", "cinp.g2", "cinp.g3", "cinp.g4","clab.g1","clab.g2","clab.g3","clab.g4","cTB.g1","cTB.g2","cTB.g3","cTB.g4")
 param2.ranges[,"distribution"]<-rep("uniform",16)
 param2.ranges[,"base"]<-c(cOPD, cinp, clab, cTB)
-param2.ranges[,"parameter1"]<-c(cOPD*0.75, cinp*0.75, clab*0.75, cTB*0.75)
-param2.ranges[,"parameter2"]<-c(cOPD*1.25, cinp*1.25, clab*1.25, cTB*1.25)
+param2.ranges[,"parameter1"]<-c(cOPD*0.5, cinp*0.5, clab*0.5, cTB*0.5)
+param2.ranges[,"parameter2"]<-c(cOPD*1.5, cinp*1.5, clab*1.5, cTB*1.5)
 
 param.ranges <- rbind(param.ranges, param2.ranges)
  
@@ -1452,30 +1171,11 @@ for(p in 1:ncol(sampled.values)){
   #go to the next column
 }
 
-
-#Perform your simulations using a combination of apply() and do.call()
-  #apply() will iteratively perform the same function to each row and/or column of a matrix argument
-    #The matrix of sampled input values will serve as our matrix argument X
-    #We will set MARGIN=1 to indicate that we want to iterate over the rows (not columns) of the matrix
-    #We will create a custom function to apply over each row (r)
-      #The key of the custom function is do.call() 
-      #do.call() calls a function of your choice and passes user-defined arguments to it
-      #we will use it to call our previously-defined function treatment.sim()
-      #We will supply it our row of sampled input values as user-defined arguments
-        #arguments for do.call() must be in the form of a list: as.list(r)
-  #apply() returns the outputs of each iteration as a column of a matrix
-      #for ease of use, we will transpose - t() - the matrix so that each iteration will be returned as a row
-
 sim.out<-t(apply(X=sampled.values,MARGIN=1, FUN=function(r) do.call(what=treatment.sim, args=as.list(r)) ))
 colnames(sim.out) <-c("Bup.cost.i4tb","Topdown.cost.i4tb","TBcost.saved.i4tb","ARTcost.saved.i4tb", "Tox.cost.i4tb", "Case.averted.i4tb", "Death.averted.i4tb", "DALY.averted.i4tb","Incre.cost.Bup.i4tb","Incre.cost.Topdown.i4tb", "ICER.Bup.i4tb", "ICER.topdown.i4tb")
 #Becase treatment.sim() returns a vector of 4 results ("Scenario1.Cure","Scenario1.Cost","Scenario2.Cure","Scenario2.Cost")
   #sim.out contains 4 columns, each corresponding to one of the outputs of treatment.sim()
   #The first row of sim.out corresponds to the results of the simulation created by the first row of sampled input values in sampled.value
-
-
-####### working 
-
-#Topdown.cost.i4tb= 62090390
 
 
 #Perform the ICER calculations
@@ -1487,78 +1187,12 @@ ICER[,"Incremental.Effectiveness"]<-sim.out[,"DALY.averted.i4tb"]
 ICER[,"Ratio"]<-ICER[,"Incremental.Cost"]/ICER[,"Incremental.Effectiveness"]
 
 
-# results<-c(sum.cost.saved.i4tb, sum.Delivery.cost.i4tb,  sum.Case.averted.i4tb, sum.Death.averted.i4tb,sum.DALY.averted.i4tb, ICER.i4tb)
-# Plot the results
-
 ICER[,"Incremental.Cost.Million"]<-ICER[,"Incremental.Cost"]/1000000
 ICER[,"Incremental.Effectiveness.Thousand"]<-ICER[,"Incremental.Effectiveness"]/1000
 
-par(mar=c(5,10,3,10))
-plot(ICER[,"Incremental.Effectiveness.Thousand"],ICER[,"Incremental.Cost.Million"],
-     xlab="", 
-     ylab="", 
-     xlim=c(0,100),
-     ylim=c(0,60),
-     xaxs="i",yaxs="i",
-     main="Incremental Cost-Effectiveness",
-     pch=1, col="gray70")
-title(xlab="DALY averted (in thousand)",ylab="I4TB net cost (in million)", line=2.5)
-points(data.frame( x = 29.4, y = 46.4),
-        pch=8, col="red")
-
-acceptable<- c( ICER[which(ICER[,"Incremental.Cost"]>=0 & ICER[,"Incremental.Effectiveness"]>=0),"Ratio"],
-                rep(0,length(which(ICER[,"Incremental.Cost"]<=0 & ICER[,"Incremental.Effectiveness"]>=0))),
-                rep(Inf,length(which( ICER[,"Incremental.Effectiveness"]<=0)))
-                )
-
-par(mar=c(5,10,3,10))
-plot(ecdf( acceptable ),do.points=F,col.01line = NULL,
-     xlim=c(0,5000),
-     ylim=c(0,1),
-     xlab="",
-     ylab="",
-     main="Cost-Effectiveness Acceptability Curve",
-     xaxs="i",yaxs="i",xaxt="n",
-     col=rgb(0.1,0.5,0.5)
-)
-title(xlab="WTP Threshold (per DALY averted)", ylab="Probability of being Cost-Effective", line=2.5)
-axis(side=1, at=c(1000, 2000, 3000, 4000))
-abline(v=c(1000, 2000, 3000, 4000), col="light gray", lty=3)
-abline(h=c(0.2, 0.4, 0.6, 0.8), col="light gray", lty=3) 
-abline(v=c(863, 3892), col="red", lty=2)
-
-
-write.csv(sim.out, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/topdown.sim.csv") 
-write.csv(ICER, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/icer.topdown.sim.csv")
-
-mean(ICER[,"Incremental.Cost"])
-quantile(ICER[,"Incremental.Cost"], c(.025, .975)) 
-
-mean(ICER[,"Incremental.Effectiveness"])
-quantile(ICER[,"Incremental.Effectiveness"], c(.025, .975)) 
-
-mean(ICER[,"Ratio"])
-quantile(ICER[,"Ratio"], c(.025, .975)) 
-
-quantile(sim.out[,"Case.averted.i4tb"], c(.025, .975)) 
-quantile(sim.out[,"Death.averted.i4tb"], c(.025, .975)) 
-quantile(sim.out[,"DALY.averted.i4tb"], c(.025, .975)) 
-
-
-quantile(sim.out[,"Bup.cost.i4tb"], c(.025, .975))  
-quantile(sim.out[,"TBcost.saved.i4tb"], c(.025, .975)) 
-quantile(sim.out[,"ARTcost.saved.i4tb"], c(.025, .975)) 
-quantile(sim.out[,"Tox.cost.i4tb"], c(.025, .975)) 
-
-
-
-
-quantile(sim.out[,"Incre.cost.Topdown.i4tb"], c(.025, .975)) 
-quantile(sim.out[,"ICER.topdown.i4tb"], c(.025, .975)) 
 ```
 
- 
-#4. catalytic Impact
+# Step 4: I4TB catalytic effect  
 ``` {r step4a S1 cohort survival projection}
 
 #1. Catalytic cohort.
@@ -1574,10 +1208,6 @@ for (i in 1:time) {
       l.cohort.S1[[k]][j,i] <- l.cohort.S1[[k]][j-1,i] - l.cohort.S1[[k]][j-1,i]*log(0.5)/-LE 
         }}
 }
-
-
-## l.country$brz [i,j]: i=time(2018+i+j)~ 27years // j=cohort (2019+j)
-
 
 ## cut off effects beyond 2031  [5,10]~
 
@@ -1648,9 +1278,6 @@ for (i in 1:imp.time) {
 }}
 }
 names(l.death.S1.dis) <- paste0(a)
-
-
-
 ```
 
 ```{r step4d S1 DALY averted projection}
@@ -1680,10 +1307,6 @@ for (i in 1:imp.time) {
 }}
 }
 names(l.DALY.S1.dis) <- paste0(a)
-
-
-
-
 ```
 
 ```{r step4e S1 delivery cost projection}
@@ -1736,11 +1359,6 @@ for (k in 1:4) { ##k=country name
   }
 }
 names(l.toxcost.S1) <- paste0(a)
-
-
-
-
-
 ```
 
 ```{r step4f S1 cost saved projection}
@@ -1868,9 +1486,6 @@ Delivery1.sum.S1.dis[, i] <- Delivery1.sum.S1[, i]*(1/(1+r)^(i-1))}
 
 Delivery1.cost.S1<- rowSums(Delivery1.sum.S1.dis)
 
-write.table(as.matrix(colSums(Delivery1.sum.S1)), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/costs1.S1.txt", sep="\t") 
-
-
 ct.Delivery1.cost.S1 <- as.matrix(Delivery1.cost.S1)
 sum.Delivery1.cost.S1 <- as.matrix(sum(Delivery1.cost.S1))
 
@@ -1889,8 +1504,6 @@ for (i in 1:time) {
 Delivery2.sum.S1.dis[, i] <- Delivery2.sum.S1[, i]*(1/(1+r)^(i-1))} 
 
 Delivery2.cost.S1<- rowSums(Delivery2.sum.S1.dis)
-
-write.table(as.matrix(colSums(Delivery2.sum.S1)), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/costs2.S1.txt", sep="\t") 
 
 ct.Delivery2.cost.S1 <- as.matrix(Delivery2.cost.S1)
 sum.Delivery2.cost.S1 <- as.matrix(sum(Delivery2.cost.S1))
@@ -1911,8 +1524,6 @@ Tox.sum.S1.dis[, i] <- Tox.sum.S1[, i]*(1/(1+r)^(i-1))}
 
 Tox.cost.S1<- rowSums(Tox.sum.S1.dis)
 
-write.table(as.matrix(colSums(Tox.sum.S1)), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/toxcost.S1.txt", sep="\t") 
-
 ct.Tox.cost.S1 <- as.matrix(Tox.cost.S1)
 sum.Tox.cost.S1 <- as.matrix(sum(Tox.cost.S1))
 
@@ -1931,8 +1542,6 @@ for (i in 1:time) {
 TBcostsaved.sum.dis.S1[, i] <- TBcostsaved.sum.S1[, i]*(1/(1+r)^(i-1))} 
 
 TBcost.saved.S1<- rowSums(TBcostsaved.sum.dis.S1)
-
-write.table(as.matrix(colSums(TBcostsaved.sum.S1)), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/TBcostsaved.S1.txt", sep="\t")
 
 ct.TBcost.saved.S1 <- as.matrix(TBcost.saved.S1)
 sum.TBcost.saved.S1 <- as.matrix(sum(TBcost.saved.S1))
@@ -1953,8 +1562,6 @@ for (i in 1:time) {
 ARTcost.sum.dis.S1[, i] <- ARTcost.sum.S1[, i]*(1/(1+r)^(i-1))} 
 
 ARTcost.saved.S1<- rowSums(ARTcost.sum.dis.S1)
-
-write.table(as.matrix(colSums(ARTcost.sum.S1)), "C:/Users/julia shin/Documents/JHU/I4TB/modeling/ARTcost.S1.txt", sep="\t") 
 
 ct.ARTcost.saved.S1 <- as.matrix(ARTcost.saved.S1)
 sum.ARTcost.saved.S1 <- as.matrix(sum(ARTcost.saved.S1))
@@ -1980,7 +1587,6 @@ write.table(table.S1, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/table.S1.
 table2.S1 <- cbind(ft.Delivery2.cost.S1,ft.TBcost.saved.S1, ft.ARTcost.saved.S1, ft.Tox.cost.S1, incrm.cost2.S1, ft.Case.averted.S1, ft.Death.averted.S1, ft.DALY.averted.S1)
 
 write.table(table2.S1, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/table2.S1.txt", sep="\t") 
-
 ```
 
 ```{r step4h S1 summary_ICER}
@@ -2015,7 +1621,6 @@ ICER.total.S1
 ICER2.total.S1= Cost2.total.S1/DALY.total.S1
 ICER2.total.S1
 
-###### need to develop as of 032420 ###############
 incrm.cost.I4TBS1 <- ft.Delivery1.cost.S1 + ft.Tox.cost.S1+ ft.ARTcost.saved.S1 - ft.TBcost.saved.S1 +  Topdown.cost.i4tb + sum(Tox.cost.i4tb)+ sum(ARTcost.saved.i4tb) - sum(TBcost.saved.i4tb)
 colnames(incrm.cost.I4TBS1) <-c("incremental cost")
 
@@ -2033,129 +1638,7 @@ write.table(table.S2.plus, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/tabl
 
 ```
 
-```{r step 4i S1 #of case and death}
-
-#case averted per year (10 year horizon)
-
-caseaverted.S1 <- matrix(0, nrow=4, ncol=20) 
-for (k in 1:4) {
-  for(i in 1:10){
-    sub_index<-0
-    for(j in 1:i){
-    caseaverted.S1[k,i] <-caseaverted.S1[k,i] +  l.case.S1[[k]][i-sub_index,j]
-    sub_index <- sub_index +1
-    }
-  }
-  
-  for (i in 11:20){
-  sub_index<-0
-  for(j in (i-9):11){
-    caseaverted.S1[k,i] <-caseaverted.S1[k,i] +  l.case.S1[[k]][10-sub_index,j]
-    sub_index <- sub_index +1 
-  }
-  }
-} 
-
-Case.averted.S1 <- colSums(caseaverted.S1)
-
-#death averted per year (10 year horizon)
-
-deathaverted.S1 <- matrix(0, nrow=4, ncol=20) 
-for (k in 1:4) {
-  for(i in 1:10){
-    sub_index<-0
-    for(j in 1:i){
-    deathaverted.S1[k,i] <-deathaverted.S1[k,i] +  l.death.S1[[k]][i-sub_index,j]
-    sub_index <- sub_index +1
-    }
-  }
-  
-  for (i in 11:20){
-  sub_index<-0
-  for(j in (i-9):11){
-    deathaverted.S1[k,i] <-deathaverted.S1[k,i] +  l.death.S1[[k]][10-sub_index,j]
-    sub_index <- sub_index +1 
-  }
-  }
-} 
-
-death.averted.S1 <- colSums(deathaverted.S1)
-
-
-#TBcost saved per year (10 year horizon)
-
-TBcostsaved.S1 <- matrix(0, nrow=4, ncol=20) 
-for (k in 1:4) {
-  for(i in 1:10){
-    sub_index<-0
-    for(j in 1:i){
-    TBcostsaved.S1[k,i] <-TBcostsaved.S1[k,i] +   l.TBcostsaved.S1[[k]][i-sub_index,j]
-    sub_index <- sub_index +1
-    }
-  }
-  
-  for (i in 11:20){
-  sub_index<-0
-  for(j in (i-9):11){
-    TBcostsaved.S1[k,i] <-TBcostsaved.S1[k,i] +  l.TBcostsaved.S1[[k]][10-sub_index,j]
-    sub_index <- sub_index +1 
-  }
-  }
-} 
-
-TBcost.saved.S1 <- colSums(TBcostsaved.S1)
-
-
-#ARTcostadded per year (10 year horizon)
-
-ARTcostadded.S1 <- matrix(0, nrow=4, ncol=20) 
-for (k in 1:4) {
-  for(i in 1:10){
-    sub_index<-0
-    for(j in 1:i){
-    ARTcostadded.S1[k,i] <-ARTcostadded.S1[k,i] +   l.ARTcost.S1[[k]][i-sub_index,j]
-    sub_index <- sub_index +1
-    }
-  }
-  
-  for (i in 11:20){
-  sub_index<-0
-  for(j in (i-9):11){
-    ARTcostadded.S1[k,i] <-ARTcostadded.S1[k,i] +  l.ARTcost.S1[[k]][10-sub_index,j]
-    sub_index <- sub_index +1 
-  }
-  }
-} 
-
-ARTcost.added.S1 <- colSums(ARTcostadded.S1)
-
-
-
-Toxcost.added.S1 <- colSums(Tox.sum.S1)
-
-Delivery1.cost.S1 <- colSums(Delivery1.sum.S1)
-
-
-
-calendar1.S1 <- cbind(as.matrix(Delivery1.cost.S1), as.matrix(Toxcost.added.S1))
-
-calendar2.S1 <- cbind(as.matrix(ARTcost.added.S1 ), as.matrix(TBcost.saved.S1 ),as.matrix(Case.averted.S1 ),as.matrix(death.averted.S1 ))
-
-rownames(calendar1.S1 ) <-c(2020:2030)
-colnames(calendar1.S1 ) <-c("delivery costs", "toxicity treatment costs added")
-
-rownames(calendar2.S1 ) <-c(2020:2039)
-colnames(calendar2.S1 ) <-c("ART costs added", "TB treatment costs saved", "cases averted", "deaths averted")
-
-
-
-write.table(calendar1.S1, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/calendar1.S1 .txt", sep="\t") 
-write.table(calendar2.S1 , "C:/Users/julia shin/Documents/JHU/I4TB/modeling/calendar2.S1 .txt", sep="\t") 
-  
-
-  
-```
-
+# Step 4-1: I4TB catalytic effect (PSA)  
 ``` {r SA}
 treatment2.sim<-function(
   LTBI=0.23,
@@ -2482,29 +1965,13 @@ results<-c(sum.Delivery1.cost.S1, sum.TBcost.saved.S1, sum.ARTcost.saved.S1, sum
   
 } 
 
-
-#Define the sampling distributions for each input variable
-#Alternatively, this can be imported using the function:
-#param2.ranges<-read.csv('/users/julia shin/Documents/JHU/I4TB/parameter2.csv',header=T,fileEncoding="UTF-8-BOM")
-
-#param.ranges<-data.frame("variable"=character(60),
-  #                      "distribution"=character(60),
-   #                    "parameter1"=numeric(60),
-    #                  "parameter2"=numeric(60))
-
-#param.ranges[,"variable"]<-c("LTBI", "TBrr","eff","comp","fatal","UwHIV","LE","UwTB", "r", "cART", "tox1", "tox2", "cOPD", "cinp", "clab", "cTB")
-#param.ranges[,"distribution"]<-rep("uniform",16)
-#param.ranges[,"parameter1"]<-c(0.204,TBrr*0.75, 0.8, 0.6, fatal*0.75, 0.921, LE*0.75,0.453, 0, 61, tox1*0.75, tox2*0.75, cOPD*0.75, cinp*0.75, clab*0.75, cTB*0.75)
-#param.ranges[,"parameter2"]<-c(0.264,TBrr*1.25, 0.95, 0.9, fatal*1.25, 0.966, LE*1.25,0.733, 0.07, 75, tox1*1.25, tox2*1.25, cOPD*1.25, cinp*1.25, clab*1.25, cTB*1.25)
- 
 #Define the number of simulations you intend to perform
 
 n.sims<-10000
 
-
 #Create a matrix to hold all of the sampled parameter values
 #Each row will represent 1 simulation; the columns in the row will correspond to the sampled parameter values for the row
-                                                                                                                                                                                                                                                                                                                                                                 sampled2.values<-matrix(nrow=n.sims,ncol=nrow(param.ranges))
+                                                                             sampled2.values<-matrix(nrow=n.sims,ncol=nrow(param.ranges))
 colnames(sampled2.values)<-param.ranges[,"variable"]
 
 
@@ -2552,20 +2019,6 @@ for(p in 1:ncol(sampled2.values)){
   #go to the next column
 }
 
-
-#Perform your simulations using a combination of apply() and do.call()
-  #apply() will iteratively perform the same function to each row and/or column of a matrix argument
-    #The matrix of sampled input values will serve as our matrix argument X
-    #We will set MARGIN=1 to indicate that we want to iterate over the rows (not columns) of the matrix
-    #We will create a custom function to apply over each row (r)
-      #The key of the custom function is do.call() 
-      #do.call() calls a function of your choice and passes user-defined arguments to it
-      #we will use it to call our previously-defined function treatment.sim()
-      #We will supply it our row of sampled input values as user-defined arguments
-        #arguments for do.call() must be in the form of a list: as.list(r)
-  #apply() returns the outputs of each iteration as a column of a matrix
-      #for ease of use, we will transpose - t() - the matrix so that each iteration will be returned as a row
-
 sim.S1.out<-t(apply(X=sampled2.values,MARGIN=1, FUN=function(r) do.call(what=treatment2.sim, args=as.list(r)) ))
 colnames(sim.S1.out) <-c("Delivery.cost.S1","TBcost.saved.S1","ARTcost.saved.S1", "Tox.cost.S1", "Case.averted.S1", "Death.averted.S1", "DALY.averted.S1","Incre.cost.S1","ICER.S1")
   
@@ -2592,9 +2045,9 @@ quantile(ICER.S1[,"Incremental.Effectiveness"], c(.025, .975))
 
 mean(ICER.S1[,"Ratio"])
 quantile(ICER.S1[,"Ratio"], c(.025, .975)) 
-
-
 ```
+
+# Step 4-2: I4TB direct effect + catalytic effect (PSA)  
 
 ```{r SA_I4TB+catalytic}
 
@@ -2683,41 +2136,6 @@ quantile(DALY.averted, c(.025, .975))
 
 ICER.final.SA[,"Incremental.Cost.Million"]<-ICER.final.SA[,"Incremental.Cost"]/1000000
 ICER.final.SA[,"Incremental.Effectiveness.Thousand"]<-ICER.final.SA[,"Incremental.Effectiveness"]/1000
-
-par(mar=c(5,10,3,10))
-plot(ICER.final.SA[,"Incremental.Effectiveness.Thousand"],ICER.final.SA[,"Incremental.Cost.Million"],
-     xlab="", 
-     ylab="", 
-          ylim=c(0,1000),
-         xlim=c(0,2500),
-     xaxs="i",yaxs="i",
-    main="Incremental Cost-Effectiveness",
-     pch=1, col="gray70")
-title(xlab="DALY averted (in thousand)",ylab="I4TB net cost (in million)", line=2.5)
-points(data.frame( x = 830, y = 592.3),
-        pch=8, col="red")
-
-
-acceptable.final<- c( ICER.final.SA[which(ICER.final.SA[,"Incremental.Cost"]>=0 & ICER.final.SA[,"Incremental.Effectiveness"]>=0),"Ratio"],
-                rep(0,length(which(ICER.final.SA[,"Incremental.Cost"]<=0 & ICER.final.SA[,"Incremental.Effectiveness"]>=0))),
-                rep(Inf,length(which( ICER.final.SA[,"Incremental.Effectiveness"]<=0)))
-                )
-
-par(mar=c(5,10,3,10))
-plot(ecdf( acceptable.final ),do.points=F,col.01line = NULL,
-     xlim=c(0,2500),
-     ylim=c(0,1),
-     xlab="",
-     ylab="",
-     main="Cost-Effectiveness Acceptability Curve",
-     xaxs="i",yaxs="i",xaxt="n",
-     col=rgb(0.1,0.5,0.5)
-)
-title(xlab="WTP Threshold (per DALY averted)", ylab="Probability of being Cost-Effective", line=2.5)
-axis(side=1, at=c(500, 1000, 1500, 2000))
-abline(v=c(500, 1000, 1500, 2000), col="light gray", lty=3)
-abline(h=c(0.2, 0.4, 0.6, 0.8), col="light gray", lty=3) 
-abline(v=c(370.4, 1811.4), col="red", lty=2)
 
 
 write.csv(ICER.final.SA, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/icer.final.sim.csv")
