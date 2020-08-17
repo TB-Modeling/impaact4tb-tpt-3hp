@@ -732,7 +732,7 @@ colnames(incrm.cost.I4TB) <-c("incremental cost")
 
 table.I4TB <- cbind(Topdown.cost.i4tb,ft.TBcost.saved.i4tb, ft.ARTcost.saved.i4tb, ft.Tox.cost.i4tb, incrm.cost.I4TB, ft.Case.averted.i4tb, ft.Death.averted.i4tb, ft.DALY.averted.i4tb)
 
-write.table(table.I4TB, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/table.I4TB.txt", sep="\t") 
+write.table(table.I4TB, "table.I4TB.txt", sep="\t") 
 
 
 ```
@@ -1101,7 +1101,7 @@ results<-c(sum.Delivery.cost.i4tb, sum.Topdown.cost.i4tb, sum.TBcost.saved.i4tb,
 
 #Define the sampling distributions for each input variable
 #Alternatively, this can be imported using the function:
-param.ranges<-read.csv('/users/julia shin/Documents/JHU/I4TB/parameter_new_f.csv',header=T,fileEncoding="UTF-8-BOM")
+param.ranges<-read.csv('parameter_new_f.csv',header=T,fileEncoding="UTF-8-BOM")
 
 param2.ranges<-data.frame("variable"=character(16),"base"=numeric(16),
                      "distribution"=character(16),
@@ -1582,11 +1582,11 @@ colnames(incrm.cost2.S1) <-c("incremental cost")
 
 table.S1 <- cbind(ft.Delivery1.cost.S1,ft.TBcost.saved.S1, ft.ARTcost.saved.S1, ft.Tox.cost.S1, incrm.cost.S1, ft.Case.averted.S1, ft.Death.averted.S1, ft.DALY.averted.S1)
 
-write.table(table.S1, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/table.S1.txt", sep="\t") 
+write.table(table.S1, "table.S1.txt", sep="\t") 
 
 table2.S1 <- cbind(ft.Delivery2.cost.S1,ft.TBcost.saved.S1, ft.ARTcost.saved.S1, ft.Tox.cost.S1, incrm.cost2.S1, ft.Case.averted.S1, ft.Death.averted.S1, ft.DALY.averted.S1)
 
-write.table(table2.S1, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/table2.S1.txt", sep="\t") 
+write.table(table2.S1, "table2.S1.txt", sep="\t") 
 ```
 
 ```{r step4h S1 summary_ICER}
@@ -1632,9 +1632,9 @@ table.S1.plus <- cbind( ft.Delivery1.cost.S1+Topdown.cost.i4tb,ft.TBcost.saved.S
 table.S2.plus <- cbind( ft.Delivery2.cost.S1+Topdown.cost.i4tb,ft.TBcost.saved.S1+sum(TBcost.saved.i4tb), ft.ARTcost.saved.S1+sum(ARTcost.saved.i4tb),ft.Tox.cost.S1+sum(Tox.cost.i4tb), incrm.cost2.I4TBS1,  ft.Case.averted.S1+sum(Case.averted.i4tb), ft.Death.averted.S1+sum(Death.averted.i4tb), ft.DALY.averted.S1+sum(DALY.averted.i4tb))
 
 
-write.table(table.S1.plus, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/table.S1.plus.txt", sep="\t") 
+write.table(table.S1.plus, "table.S1.plus.txt", sep="\t") 
 
-write.table(table.S2.plus, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/table.S2.plus.txt", sep="\t") 
+write.table(table.S2.plus, "table.S2.plus.txt", sep="\t") 
 
 ```
 
@@ -2024,7 +2024,7 @@ colnames(sim.S1.out) <-c("Delivery.cost.S1","TBcost.saved.S1","ARTcost.saved.S1"
   
  #The first row of sim.out corresponds to the results of the simulation created by the first row of sampled input values in sampled.value
 
-write.csv(sim.S1.out, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/S1.sim.csv") 
+write.csv(sim.S1.out, "S1.sim.csv") 
 
 #Perform the ICER calculations
 ICER.S1<-matrix(ncol=3,nrow=nrow(sim.S1.out))
@@ -2034,7 +2034,7 @@ ICER.S1[,"Incremental.Cost"]<-sim.S1.out[,"Delivery.cost.S1"]+sim.S1.out[,"Tox.c
 ICER.S1[,"Incremental.Effectiveness"]<-sim.S1.out[,"DALY.averted.S1"]
 ICER.S1[,"Ratio"]<-ICER.S1[,"Incremental.Cost"]/ICER.S1[,"Incremental.Effectiveness"]
 
-write.csv(ICER.S1, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/icer.S1.sim.csv")
+write.csv(ICER.S1, "icer.S1.sim.csv")
 
 
 mean(ICER.S1[,"Incremental.Cost"])
@@ -2114,7 +2114,7 @@ ICER.final.SA[,"Ratio"]<-ICER.final.SA[,"Incremental.Cost"]/ICER.final.SA[,"Incr
 
 I4TBS1.sim <- cbind(delivery.cost,TBcost.saved,ARTcost.saved,Tox.cost ,Incr.cost, Case.averted, Death.averted,DALY.averted,ICER.final.SA[,"Ratio"]  )
   
-write.csv(I4TBS1.sim , "C:/Users/julia shin/Documents/JHU/I4TB/modeling/I4TBS1.sim .csv")  
+write.csv(I4TBS1.sim , "I4TBS1.sim .csv")  
 
 
 
@@ -2138,7 +2138,7 @@ ICER.final.SA[,"Incremental.Cost.Million"]<-ICER.final.SA[,"Incremental.Cost"]/1
 ICER.final.SA[,"Incremental.Effectiveness.Thousand"]<-ICER.final.SA[,"Incremental.Effectiveness"]/1000
 
 
-write.csv(ICER.final.SA, "C:/Users/julia shin/Documents/JHU/I4TB/modeling/icer.final.sim.csv")
+write.csv(ICER.final.SA, "icer.final.sim.csv")
 
 ```
 
