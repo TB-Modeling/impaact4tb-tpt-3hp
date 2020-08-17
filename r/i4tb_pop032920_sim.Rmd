@@ -259,7 +259,6 @@ m.ART[i, ] <- m [i, ]%*%m.pART
     }  
 
 #I4TB covers 5~60% of newly enrolled in ART care 
-m.i4tb<- data.matrix(i4tb.pop)
 m.i4tb <- matrix(c(0:0) ,nrow=time, ncol=4)
 m.i4tb[1,1] <- m.ART [1,13]%*%0.5 
 m.i4tb[2,1] <- m.ART [2,13]%*%0.6 
