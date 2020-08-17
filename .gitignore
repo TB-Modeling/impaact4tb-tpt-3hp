@@ -10,7 +10,7 @@ dev/
 dist/
 env/
 ignored/
-output/
+*output/
 *~$*
 *.DS_Store
 *.egg-info
