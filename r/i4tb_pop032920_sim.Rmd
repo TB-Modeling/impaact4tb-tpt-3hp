@@ -10,6 +10,8 @@ output: pdf_document
 time=11 #(2020~2030)
 imp.time=10 #3HP effectiveness time =10years
 
+a <- c( 'I4TB.g1', 'I4TB.g2', 'other.g1', 'other.g2')
+
 TBrr <- 0.016    #TB reactivation rate/ Golub, AIDS 2007; Sterling AIDS 2016
 eff <- 0.9       #Efficacy of 3HP/ Sterling, N Engl J Med 2011
 comp <- 0.8      #Completion of 3HP/ Sterling, N Engl J Med 2011
